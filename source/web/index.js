@@ -1,8 +1,8 @@
-import createXAtlasModule from "./build/xatlas_web.js"
+import createXAtlasModule from "./build/xatlas.js"
 import { expose } from "comlink";
 
-let _onLoad = ()=>{} //  we cannot put it in the object, otherwise we cannot access it from the outside
-export class XAtlasAPI{
+let _onLoad = () => { } //  we cannot put it in the object, otherwise we cannot access it from the outside
+export class XAtlasAPI {
 
     /**
      * @param onLoad {Function}
@@ -12,32 +12,32 @@ export class XAtlasAPI{
     constructor(onLoad, locateFile, onAtlasProgress) {
         this.xatlas = null;
         this.loaded = false;
-        _onLoad = onLoad || (()=>{});
+        _onLoad = onLoad || (() => { });
         this.atlasCreated = false;
         /**
          * @type {{meshId: number, vertices: Float32Array, normals: Float32Array|null, coords: Float32Array|null, meshObj: any}[]}
          */
         this.meshes = [];
         let params = {};
-        if (onAtlasProgress) params = {...params, onAtlasProgress};
-        const ctor = (loc)=>{
-            params = {...params, locateFile: ((path, dir)=> ( (loc && path === "xatlas_web.wasm") ? loc : dir+path) ) };
-            createXAtlasModule(params).then(m=>{this.moduleLoaded(m)});
+        if (onAtlasProgress) params = { ...params, onAtlasProgress };
+        const ctor = (loc) => {
+            params = { ...params, locateFile: ((path, dir) => ((loc && path === "xatlas_web.wasm") ? loc : dir + path)) };
+            createXAtlasModule(params).then(m => { this.moduleLoaded(m) });
         }
         if (locateFile) {
             let pp = locateFile("xatlas_web.wasm", "");
-            if (pp&&pp.then) pp.then(ctor);
+            if (pp && pp.then) pp.then(ctor);
             else ctor(pp);
-        }else ctor()
+        } else ctor()
     }
 
-    moduleLoaded(mod){
+    moduleLoaded(mod) {
         this.xatlas = mod;
         this.loaded = true;
-        if(_onLoad) _onLoad();
+        if (_onLoad) _onLoad();
     }
 
-    createAtlas(){
+    createAtlas() {
         this.xatlas.createAtlas();
         this.meshes = [];
         this.atlasCreated = true;
@@ -55,28 +55,28 @@ export class XAtlasAPI{
      * @param scale {number|[number, number, number]}
      * @return {null | {indexes: (Float32Array | null), vertices: Float32Array, normals: (Float32Array | null), meshId: number, coords: (Float32Array | null), meshObj: any}}
      */
-    addMesh(indexes, vertices, normals=null, coords=null, meshObj=undefined, useNormals = false, useCoords = false, scale =1){
-        if(!this.loaded || !this.atlasCreated) throw "Create atlas first";
-        let meshDesc = this.xatlas.createMesh(vertices.length/3, indexes.length, normals != null && useNormals, coords != null && useCoords);
-        this.xatlas.HEAPU16.set(indexes, meshDesc.indexOffset/2);
+    addMesh(indexes, vertices, normals = null, coords = null, meshObj = undefined, useNormals = false, useCoords = false, scale = 1) {
+        if (!this.loaded || !this.atlasCreated) throw "Create atlas first";
+        let meshDesc = this.xatlas.createMesh(vertices.length / 3, indexes.length, normals != null && useNormals, coords != null && useCoords);
+        this.xatlas.HEAPU16.set(indexes, meshDesc.indexOffset / 2);
 
         let vs = new Float32Array([...vertices]);
-        if(scale!==1) {
-            if(typeof scale === "number") scale = [scale, scale, scale]
-            for (let i = 0, l = vs.length; i < l; i+=3) {
+        if (scale !== 1) {
+            if (typeof scale === "number") scale = [scale, scale, scale]
+            for (let i = 0, l = vs.length; i < l; i += 3) {
                 vs[i] *= scale[0];
-                vs[i+1] *= scale[1];
-                vs[i+2] *= scale[2];
+                vs[i + 1] *= scale[1];
+                vs[i + 2] *= scale[2];
             }
         }
 
-        this.xatlas.HEAPF32.set(vs, meshDesc.positionOffset/4);
-        if(normals != null && useNormals) this.xatlas.HEAPF32.set(normals, meshDesc.normalOffset/4);
-        if(coords != null && useCoords) this.xatlas.HEAPF32.set(coords, meshDesc.uvOffset/4);
+        this.xatlas.HEAPF32.set(vs, meshDesc.positionOffset / 4);
+        if (normals != null && useNormals) this.xatlas.HEAPF32.set(normals, meshDesc.normalOffset / 4);
+        if (coords != null && useCoords) this.xatlas.HEAPF32.set(coords, meshDesc.uvOffset / 4);
         let addMeshRes = this.xatlas.addMesh();
         // this.xatlas._free(meshDesc.indexOffset); // should be done on c++ side
         // this.xatlas._free(meshDesc.positionOffset);
-        if(addMeshRes !== 0) {
+        if (addMeshRes !== 0) {
             console.log("Error adding mesh: ", addMeshRes);
             return null;
         }
@@ -99,7 +99,7 @@ export class XAtlasAPI{
      * @param coords
      * @return {{meshId: number, indexOffset: number, positionOffset: number, normalOffset: number, uvOffset: number, meshObj: any}}
      */
-    createMesh(vertexCount, indexCount, normals, coords){
+    createMesh(vertexCount, indexCount, normals, coords) {
         return this.xatlas.createMesh(vertexCount, indexCount, normals, coords);
     }
 
@@ -114,46 +114,46 @@ export class XAtlasAPI{
      * @param returnMeshes {boolean} - default = true
      * @return {{vertex: {vertices: Float32Array, coords1: Float32Array, normals?: Float32Array, coords?: Float32Array}, index: Uint16Array, mesh: any}[]}
      */
-    generateAtlas(chartOptions, packOptions, returnMeshes = true){
-        if(!this.loaded || !this.atlasCreated) throw "Create atlas first";
-        if(this.meshes.length < 1) throw "Add meshes first";
-        chartOptions = { ...this.defaultChartOptions(), ...chartOptions};
+    generateAtlas(chartOptions, packOptions, returnMeshes = true) {
+        if (!this.loaded || !this.atlasCreated) throw "Create atlas first";
+        if (this.meshes.length < 1) throw "Add meshes first";
+        chartOptions = { ...this.defaultChartOptions(), ...chartOptions };
         packOptions = { ...this.defaultPackOptions(), ...packOptions };
         this.xatlas.generateAtlas(chartOptions, packOptions);
-        if(!returnMeshes) return [];
+        if (!returnMeshes) return [];
         let returnVal = [];
-        for (let {meshId, meshObj, vertices, normals, coords} of this.meshes){
+        for (let { meshId, meshObj, vertices, normals, coords } of this.meshes) {
             let ret = this.getMeshData(meshId);
-            let index = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.indexOffset/4, ret.indexOffset/4+ret.newIndexCount));
-            let oldIndexes = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset/4, ret.originalIndexOffset/4+ret.newVertexCount));
-            let xcoords = new Float32Array(this.xatlas.HEAPF32.subarray(ret.uvOffset/4, ret.uvOffset/4+ret.newVertexCount*2));
+            let index = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.indexOffset / 4, ret.indexOffset / 4 + ret.newIndexCount));
+            let oldIndexes = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset / 4, ret.originalIndexOffset / 4 + ret.newVertexCount));
+            let xcoords = new Float32Array(this.xatlas.HEAPF32.subarray(ret.uvOffset / 4, ret.uvOffset / 4 + ret.newVertexCount * 2));
             this.xatlas.destroyMeshData(ret);
 
             let vertex = {};
             vertex.vertices = new Float32Array(ret.newVertexCount * 3);
             vertex.coords1 = xcoords;
-            if(normals)
+            if (normals)
                 vertex.normals = new Float32Array(ret.newVertexCount * 3);
-            if(coords)
+            if (coords)
                 vertex.coords = new Float32Array(ret.newVertexCount * 2);
             else vertex.coords = vertex.coords1;
 
-            for(let i =0, l=ret.newVertexCount; i<l; i++){
+            for (let i = 0, l = ret.newVertexCount; i < l; i++) {
                 let oldIndex = oldIndexes[i];
-                vertex.vertices[3*i + 0] = vertices[3*oldIndex + 0];
-                vertex.vertices[3*i + 1] = vertices[3*oldIndex + 1];
-                vertex.vertices[3*i + 2] = vertices[3*oldIndex + 2];
-                if(vertex.normals&&normals){
-                    vertex.normals[3*i + 0] = normals[3*oldIndex + 0];
-                    vertex.normals[3*i + 1] = normals[3*oldIndex + 1];
-                    vertex.normals[3*i + 2] = normals[3*oldIndex + 2];
+                vertex.vertices[3 * i + 0] = vertices[3 * oldIndex + 0];
+                vertex.vertices[3 * i + 1] = vertices[3 * oldIndex + 1];
+                vertex.vertices[3 * i + 2] = vertices[3 * oldIndex + 2];
+                if (vertex.normals && normals) {
+                    vertex.normals[3 * i + 0] = normals[3 * oldIndex + 0];
+                    vertex.normals[3 * i + 1] = normals[3 * oldIndex + 1];
+                    vertex.normals[3 * i + 2] = normals[3 * oldIndex + 2];
                 }
-                if(vertex.coords&&coords){
-                    vertex.coords[2*i + 0] = coords[2*oldIndex + 0];
-                    vertex.coords[2*i + 1] = coords[2*oldIndex + 1];
+                if (vertex.coords && coords) {
+                    vertex.coords[2 * i + 0] = coords[2 * oldIndex + 0];
+                    vertex.coords[2 * i + 1] = coords[2 * oldIndex + 1];
                 }
             }
-            returnVal.push({index: index, vertex: vertex, mesh: meshObj, vertexCount: ret.newVertexCount, oldIndexes: oldIndexes});
+            returnVal.push({ index: index, vertex: vertex, mesh: meshObj, vertexCount: ret.newVertexCount, oldIndexes: oldIndexes });
         }
         return returnVal;
     }
@@ -189,7 +189,7 @@ export class XAtlasAPI{
         };
     }
 
-    setProgressLogging(flag){
+    setProgressLogging(flag) {
         this.xatlas.setProgressLogging(flag);
     }
 
@@ -197,7 +197,7 @@ export class XAtlasAPI{
      * @param meshId
      * @return {{newVertexCount: number, newIndexCount: number, indexOffset: number, originalIndexOffset: number, uvOffset: number}}
      */
-    getMeshData(meshId){
+    getMeshData(meshId) {
         return this.xatlas.getMeshData(meshId);
     }
 
@@ -205,11 +205,11 @@ export class XAtlasAPI{
      * @param data {{newVertexCount: number, newIndexCount: number, indexOffset: number, originalIndexOffset: number, uvOffset: number}}
      * @return {*}
      */
-    destroyMeshData(data){
+    destroyMeshData(data) {
         this.xatlas.destroyMeshData(data);
     }
 
-    destroyAtlas(){
+    destroyAtlas() {
         this.atlasCreated = false;
         this.xatlas.destroyAtlas();
         this.meshes = [];
