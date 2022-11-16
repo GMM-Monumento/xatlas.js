@@ -21,11 +21,15 @@ export class XAtlasAPI {
         let params = {};
         if (onAtlasProgress) params = { ...params, onAtlasProgress };
         const ctor = (loc) => {
-            params = { ...params, locateFile: ((path, dir) => ((loc && path === "xatlas_web.wasm") ? loc : dir + path)) };
+            params = {
+                ...params, locateFile: ((path, dir) => {
+                    return ((loc && path === "xatlas.wasm") ? loc : dir + path)
+                })
+            };
             createXAtlasModule(params).then(m => { this.moduleLoaded(m) });
         }
         if (locateFile) {
-            let pp = locateFile("xatlas_web.wasm", "");
+            let pp = locateFile("xatlas.wasm", "");
             if (pp && pp.then) pp.then(ctor);
             else ctor(pp);
         } else ctor()

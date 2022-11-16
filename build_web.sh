@@ -39,7 +39,7 @@ echo "============================================="
 #    -fsanitize=address \
 #    -g3
 #    Uncomment above line for leak checking
-
+#       -s 'ENVIRONMENT="worker"' \ web
   # Move artifacts
   rm -rf dist
   mkdir -p dist

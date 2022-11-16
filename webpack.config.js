@@ -17,7 +17,7 @@ entry[BUILD_FILE_NAME] = path.join(SRC_PATH, 'index.js');
 
 module.exports = {
     mode: MODE,
-    devtool: 'source-map',
+    // devtool: 'source-map',
     entry: entry,
     output: {
         filename: '[name].js',
