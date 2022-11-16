@@ -107,9 +107,9 @@ export class XAtlasAPI {
         return this.xatlas.createMesh(vertexCount, indexCount, normals, coords);
     }
 
-    // createUvMesh(vertexCount, indexCount){
-    //     return this.xatlas.createUvMesh(vertexCount, indexCount);
-    // }
+    createUvMesh(vertexCount, indexCount) {
+        return this.xatlas.createUvMesh(vertexCount, indexCount);
+    }
 
     /**
      * Result in coords1, input coords in coords
