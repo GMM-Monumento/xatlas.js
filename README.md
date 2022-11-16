@@ -31,6 +31,14 @@ Check out [xatlas-three](https://github.com/repalash/xatlas-three) package to di
 
 ### Building Web
 * Install emscripten 2. (Tested with 2.0.7 on macOS).
+# Download and install v2.
+./emsdk install 2.0.34
+
+# Make the "latest" SDK "active" for the current user. (writes .emscripten file)
+./emsdk activate 2.0.34
+
+# Activate PATH and other environment variables in the current terminal
+source ./emsdk_env.sh
 * Run `npm install`
 * Run `npm run build` - this should generate files in the `dist` folder. 
 
