@@ -4294,8 +4294,9 @@ static NLMatrix nlCRSMatrixNewFromSparseMatrix(NLSparseMatrix* M)
 		CRS->sliceptr[0] = 0;
 		for (slice = 1; slice < nslices; ++slice) {
 			while (cur_NNZ < cur_bound && cur_row < M->m) {
-				++cur_row;
+				// ++cur_row;
 				cur_NNZ += CRS->rowptr[cur_row + 1] - CRS->rowptr[cur_row];
+				++cur_row;
 			}
 			CRS->sliceptr[slice] = cur_row;
 			cur_bound += slice_size;
@@ -9560,16 +9561,16 @@ void PackCharts(Atlas *atlas, PackOptions packOptions)
 	}
 	Context *ctx = (Context *)atlas;
 	if (ctx->meshes.isEmpty() && ctx->uvMeshInstances.isEmpty()) {
-		XA_PRINT_WARNING("PackCharts: No meshes. Call AddMesh or AddUvMesh first.\n");
+		XA_PRINT_WARNING("PackCharts 1: No meshes. Call AddMesh or AddUvMesh first.\n");
 		return;
 	}
 	if (ctx->uvMeshInstances.isEmpty()) {
 		if (!ctx->paramAtlas.chartsComputed()) {
-			XA_PRINT_WARNING("PackCharts: ComputeCharts must be called first.\n");
+			XA_PRINT_WARNING("PackCharts 2: ComputeCharts must be called first.\n");
 			return;
 		}
 	} else if (!ctx->uvMeshChartsComputed) {
-		XA_PRINT_WARNING("PackCharts: ComputeCharts must be called first.\n");
+		XA_PRINT_WARNING("PackCharts 3: ComputeCharts must be called first.\n");
 		return;
 	}
 	if (packOptions.texelsPerUnit < 0.0f) {

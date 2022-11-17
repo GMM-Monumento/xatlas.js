@@ -58,7 +58,7 @@ MeshBufferInfo createMesh(uint32_t vertexCount, uint32_t indexCount, bool normal
     return meshBufferInfo;
 }
 
-UvMeshBufferInfo createUvMesh(int vertexCount, int indexCount) {
+UvMeshBufferInfo createUvMesh(uint32_t vertexCount, uint32_t indexCount) {
     UvMeshBufferInfo uvMeshBufferInfo;
     uvMeshBufferInfo.meshId = nextMeshId++;
 

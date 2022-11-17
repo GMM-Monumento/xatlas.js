@@ -36,7 +36,7 @@ extern void createAtlas();
 
 extern MeshBufferInfo createMesh(uint32_t vertexCount, uint32_t indexCount, bool normals, bool uvs);
 
-extern UvMeshBufferInfo createUvMesh(int vertexCount, int indexCount);
+extern UvMeshBufferInfo createUvMesh(uint32_t vertexCount, uint32_t indexCount);
 
 extern uint32_t addMesh();
 
