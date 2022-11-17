@@ -108,7 +108,7 @@ export class XAtlasAPI {
         this.xatlas.generateAtlas(chartOptions, packOptions);
         if (!returnMeshes) return [];
         let returnVal = [];
-        for (let { meshId, meshObj, vertices, normals, indexes, uvs } of this.meshes) {
+        for (let { meshId, meshObj, vertices, normals, uvs } of this.meshes) {
             let ret = this.getMeshData(meshId);
             let index = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.indexOffset / 4, ret.indexOffset / 4 + ret.newIndexCount));
             let oldIndexes = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset / 4, ret.originalIndexOffset / 4 + ret.newVertexCount));
@@ -207,13 +207,6 @@ export class XAtlasAPI {
             let oldIndexes = new Uint16Array(this.xatlas.HEAPU32.subarray(ret.originalIndexOffset / 4, ret.originalIndexOffset / 4 + ret.newVertexCount));
             let xcoords = new Float32Array(this.xatlas.HEAPF32.subarray(ret.uvOffset / 4, ret.uvOffset / 4 + ret.newVertexCount * 2));
             this.xatlas.destroyMeshData(ret);
-            if (meshId === '4' || meshId === 4) {
-                console.log('packAtlas', meshId);
-                console.log('ret', ret);
-                console.log('index', index);
-                console.log('oldIndexes', oldIndexes);
-                console.log('oldIndex Sent', indexes);
-            }
             const newVertices = new Float32Array(ret.newVertexCount * 3);
             let newNormals;
             let newUVs;
